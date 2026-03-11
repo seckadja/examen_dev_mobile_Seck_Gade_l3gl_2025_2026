@@ -5,6 +5,8 @@ import 'package:sunu_task/models/OnboardingItem.dart';
 import 'package:sunu_task/screens/home/home_screen.dart';
 import 'package:sunu_task/services/storage_service.dart';
 
+import '../auth/login_screen.dart';
+
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -63,11 +65,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _completeOnboarding() async{
     await StorageService.instance.setOnboardingComplete(true);
-    
-    if(mounted){
+
+    if (mounted) {
       Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen())
+          MaterialPageRoute(builder: (_) => const LoginScreen())
       );
     }
   }

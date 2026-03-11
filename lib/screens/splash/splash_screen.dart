@@ -7,6 +7,9 @@ import 'package:sunu_task/screens/onboarding/onboarding_screen.dart';
 import 'package:sunu_task/services/storage_service.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../auth/login_screen.dart';
+
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -73,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
           onboardingComplete
-              ? const HomeScreen()
+              ? const LoginScreen()
               : const OnboardingScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
