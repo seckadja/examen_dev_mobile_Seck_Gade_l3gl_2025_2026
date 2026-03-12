@@ -27,7 +27,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
 
-     final Future<List<User>> users = StorageService.instance.getUsers();
+    final List<User> users = await StorageService.instance.getUsers();
 
 
     User? found;
