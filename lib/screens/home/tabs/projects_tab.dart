@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_strings.dart';
 import '../../../models/Project.dart';
 import '../../../providers/project_provider.dart';
 import '../../../widgets/cards/project_card.dart';
@@ -15,7 +18,6 @@ class ProjectsTab extends StatelessWidget {
     return ListenableBuilder(
       listenable: projectProvider,
       builder: (context, _) {
-        // Chargement en cours
         if (projectProvider.isLoading) {
           return const LoadingIndicator();
         }
@@ -32,16 +34,16 @@ class ProjectsTab extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.folder_open, size: 80, color: Colors.grey),
+                      Icon(Icons.folder_open, size: 80, color: AppColors.textDisable),
                       SizedBox(height: 16),
                       Text(
-                        'Aucun projet pour le moment',
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                        AppStrings.noProjects,
+                        style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Appuyez sur + pour creer votre premier projet',
-                        style: TextStyle(color: Colors.grey),
+                        AppStrings.noProjectsDesc,
+                        style: TextStyle(color: AppColors.textDisable),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -49,7 +51,6 @@ class ProjectsTab extends StatelessWidget {
                 ),
               ),
 
-              // Liste des projets
               Visibility(
                 visible: projects.isNotEmpty,
                 child: Expanded(
@@ -62,31 +63,27 @@ class ProjectsTab extends StatelessWidget {
                         description:  p.description ?? '',
                         couleur:      Color(p.color),
                         nombreTaches: 0,
-                        onTap: () {
-                          // TODO:On naviguer vers ProjectDetailScreen
-                        },
-                        onModifier: () {
-                          // TODO:On naviguer vers ProjectFormScreen
-                        },
+                        onTap: () {},
+                        onModifier: () {},
                         onSupprimer: () async {
                           final bool? confirmer = await showDialog<bool>(
                             context: context,
                             builder: (_) => AlertDialog(
-                              title: const Text('Supprimer le projet ?'),
+                              title: const Text(AppStrings.deleteProject),
                               content: Text(
-                                'Voulez-vous vraiment le supprimer "${p.name}" ?\n'
+                                '${AppStrings.confirmDelete} "${p.name}" ?\n'
                                     'Toutes ses taches seront aussi supprimees.',
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context, false),
-                                  child: const Text('Annuler'),
+                                  child: const Text(AppStrings.cancel),
                                 ),
                                 TextButton(
                                   onPressed: () => Navigator.pop(context, true),
                                   child: const Text(
-                                    'Supprimer',
-                                    style: TextStyle(color: Colors.red),
+                                    AppStrings.delete, // AppStrings
+                                    style: TextStyle(color: AppColors.error),
                                   ),
                                 ),
                               ],
@@ -101,7 +98,6 @@ class ProjectsTab extends StatelessWidget {
                   ),
                 ),
               ),
-
             ],
           ),
         );

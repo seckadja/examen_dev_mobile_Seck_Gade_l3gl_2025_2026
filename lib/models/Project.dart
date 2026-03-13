@@ -7,7 +7,7 @@ class Project {
   final int color;
   final DateTime createdAt;
 
-  /// Constructeur
+
   Project({
     required this.id,
     required this.name,
@@ -17,8 +17,7 @@ class Project {
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
-  /// Copie avec modification
-  /// Ex: final updated = project.copyWith(name: 'Nouveau nom')
+
   Project copyWith({
     String? id,
     String? name,
@@ -37,7 +36,7 @@ class Project {
     );
   }
 
-  /// Convertir en Map pour sauvegarder dans SharedPreferences
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -49,7 +48,7 @@ class Project {
     };
   }
 
-  /// Créer un Project depuis un Map (lecture depuis SharedPreferences)
+
   factory Project.fromMap(Map<String, dynamic> map) {
     return Project(
       id: map['id'] as String,

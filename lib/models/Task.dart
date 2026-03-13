@@ -24,7 +24,7 @@ class Task {
   final DateTime? dueDate;
   final DateTime createdAt;
 
-  /// Constructeur
+
   Task({
     required this.id,
     required this.title,
@@ -37,7 +37,7 @@ class Task {
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
-  /// Copie avec modification
+
   Task copyWith({
     String? id,
     String? title,
@@ -62,7 +62,7 @@ class Task {
     );
   }
 
-  /// Convertir en Map pour sauvegarder dans SharedPreferences
+
 
   Map<String, dynamic> toMap() {
     return {

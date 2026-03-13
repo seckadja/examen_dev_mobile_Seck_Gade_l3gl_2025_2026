@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_strings.dart';
 import '../../../models/Project.dart';
 import '../../../models/Task.dart';
 import '../../../providers/auth_provider.dart';
@@ -13,7 +14,6 @@ import '../../projects/project_form_screen.dart';
 class DashboardTab extends StatelessWidget {
   const DashboardTab({super.key});
 
-  // Message de bienvenue selon l'heure de la journee
   String _getGreeting() {
     final int hour = DateTime.now().hour;
     if (hour < 12) return 'Bonjour';
@@ -23,10 +23,10 @@ class DashboardTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // On recupere les providers
     final authProvider    = Provider.of<AuthProvider>(context, listen: false);
     final projectProvider = Provider.of<ProjectProvider>(context, listen: false);
     final taskProvider    = Provider.of<TaskProvider>(context, listen: false);
+
     return ListenableBuilder(
       listenable: Listenable.merge([authProvider, projectProvider, taskProvider]),
       builder: (context, _) {
@@ -36,20 +36,17 @@ class DashboardTab extends StatelessWidget {
 
         final String userName = authProvider.currentUser?.name ?? 'Utilisateur';
 
-        // Statistiques depuis les providers
         final int projectCount    = projectProvider.projectCount;
         final int todoCount       = taskProvider.taskCountByStatus[TaskStatus.todo]       ?? 0;
         final int inProgressCount = taskProvider.taskCountByStatus[TaskStatus.inProgress] ?? 0;
         final int doneCount       = taskProvider.taskCountByStatus[TaskStatus.done]       ?? 0;
 
-        //  les 3 derniers projets
         final List<Project> allProjects = projectProvider.projects;
         final List<Project> recentProjects = allProjects.length > 3
             ? allProjects.sublist(allProjects.length - 3)
             : allProjects;
 
         return RefreshIndicator(
-          // L'utilisateur tire vers le bas pour recharger
           onRefresh: () async {
             final userId = authProvider.currentUser?.id;
             if (userId != null) {
@@ -62,81 +59,76 @@ class DashboardTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-
                 Text(
                   '${_getGreeting()}, $userName !',
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 const Text(
                   'Voici un resume de vos activites',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 24),
 
-                //Titre section statistiques
                 const Text(
                   'Statistiques',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary), // AppColors
                 ),
                 const SizedBox(height: 12),
 
-                //Ligne 1 : Projets + A faire
                 Row(
                   children: [
                     Expanded(
                       child: _StatCard(
-                        label: 'Projets',
+                        label: AppStrings.projects,
                         count: projectCount,
                         icon: Icons.folder,
-                        color: Colors.blue,
+                        color: AppColors.info,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _StatCard(
-                        label: 'A faire',
+                        label: AppStrings.statusTodo,
                         count: todoCount,
                         icon: Icons.radio_button_unchecked,
-                        color: Colors.orange,
+                        color: AppColors.priorityMedium,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
 
-                // Ligne 2 : En cours + Terminees
                 Row(
                   children: [
                     Expanded(
                       child: _StatCard(
-                        label: 'En cours',
+                        label: AppStrings.statusInProgress,
                         count: inProgressCount,
                         icon: Icons.autorenew,
-                        color: Colors.purple,
+                        color: AppColors.statusInProgress,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _StatCard(
-                        label: 'Terminees',
+                        label: AppStrings.statusDone,
                         count: doneCount,
                         icon: Icons.check_circle,
-                        color: Colors.green,
+                        color: AppColors.statusDone,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
 
-                //Titre projets recents
                 const Text(
                   'Projets recents',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 12),
                 Visibility(
@@ -147,13 +139,12 @@ class DashboardTab extends StatelessWidget {
                       child: Text(
                         'Aucun projet pour le moment.\nAppuyez sur + pour commencer !',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(color: AppColors.textDisable),
                       ),
                     ),
                   ),
                 ),
 
-                // Liste des projets recents avec ProjectCard
                 Visibility(
                   visible: recentProjects.isNotEmpty,
                   child: Column(
@@ -163,12 +154,8 @@ class DashboardTab extends StatelessWidget {
                         description:  p.description ?? '',
                         couleur:      Color(p.color),
                         nombreTaches: 0,
-                        onTap: () {
-                          // TODO:On naviguer vers ProjectDetailScreen
-                        },
-                        onModifier: () {
-                          // TODO:On  naviguer vers ProjectFormScreen
-                        },
+                        onTap: () {},
+                        onModifier: () {},
                         onSupprimer: () async {
                           await projectProvider.deleteProject(p.id);
                         },
@@ -176,7 +163,6 @@ class DashboardTab extends StatelessWidget {
                     }).toList(),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -186,7 +172,6 @@ class DashboardTab extends StatelessWidget {
   }
 }
 
-// Carte de statistique
 class _StatCard extends StatelessWidget {
   final String   label;
   final int      count;
@@ -204,6 +189,7 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
+      color: AppColors.surface,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -221,7 +207,7 @@ class _StatCard extends StatelessWidget {
             ),
             Text(
               label,
-              style: const TextStyle(color: Colors.grey),
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
           ],
         ),

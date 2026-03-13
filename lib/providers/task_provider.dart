@@ -4,13 +4,13 @@ import '../services/storage_service.dart';
 
 class TaskProvider extends ChangeNotifier {
 
-  // ===== DONNÉES PRIVÉES =====
+
   List<Task> _tasks = [];
   TaskStatus? _statusFilter;
   TaskPriority? _priorityFilter;
   bool _isLoading = false;
 
-  // ===== GETTERS =====
+
   bool get isLoading => _isLoading;
 
   // Retourne les tâches filtrées
@@ -39,7 +39,7 @@ class TaskProvider extends ChangeNotifier {
     };
   }
 
-  // ===== CHARGER LES TÂCHES =====
+  // CHARGER LES TÂCHES
   Future<void> loadTasks(String projectId) async {
     _isLoading = true;
     notifyListeners();
@@ -53,14 +53,14 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ===== CRÉER UNE TÂCHE =====
+  // CRÉER UNE TÂCHE
   Future<void> createTask(Task task) async {
     await StorageService.instance.saveTask(task);
     _tasks.add(task);
     notifyListeners();
   }
 
-  // ===== MODIFIER UNE TÂCHE =====
+  //  MODIFIER UNE TÂCHE
   Future<void> updateTask(Task task) async {
     await StorageService.instance.updateTask(task);
     _tasks.removeWhere((t) => t.id == task.id);
@@ -68,14 +68,14 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ===== SUPPRIMER UNE TÂCHE =====
+  // SUPPRIMER UNE TÂCHE
   Future<void> deleteTask(String taskId) async {
     await StorageService.instance.deleteTask(taskId);
     _tasks.removeWhere((t) => t.id == taskId);
     notifyListeners();
   }
 
-  // ===== CHANGER LE STATUT D'UNE TÂCHE =====
+  //CHANGER LE STATUT D'UNE TÂCHE
   Future<void> updateTaskStatus(String taskId, TaskStatus status) async {
 
     final task = _tasks.firstWhere((t) => t.id == taskId);
@@ -83,7 +83,7 @@ class TaskProvider extends ChangeNotifier {
     await updateTask(updatedTask);
   }
 
-  // ===== FILTRES =====
+  //  FILTRES
   void setStatusFilter(TaskStatus? status) {
     _statusFilter = status;
     notifyListeners();

@@ -3,12 +3,12 @@ import '../services/storage_service.dart';
 
 class AppProvider extends ChangeNotifier {
 
-  // Les données privées
+
   bool _isOnboardingComplete = false;
   bool _isInitialized = false;
   bool _isLoading = false;
 
-  // Les getters pour lire depuis l'extérieur
+
   bool get isOnboardingComplete => _isOnboardingComplete;
   bool get isInitialized => _isInitialized;
   bool get isLoading => _isLoading;

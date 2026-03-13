@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_strings.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/project_provider.dart';
 import '../../widgets/common/custom_button.dart';
-
-// Les 4 onglets dans leurs fichiers separes
 import '../auth/login_screen.dart';
 import 'tabs/dashboard_tab.dart';
 import 'tabs/projects_tab.dart';
@@ -20,14 +19,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int _currentIndex = 0;
 
+
   final List<String> _titles = [
-    'Dashboard',
-    'Projets',
-    'Taches',
-    'Profil',
+    AppStrings.home,
+    AppStrings.projects,
+    AppStrings.tasks,
+    AppStrings.profile,
   ];
 
   @override
@@ -38,167 +37,154 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // Charger les projets de l'utilisateur connecte
   Future<void> _chargerDonnees() async {
-    final authProvider    = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final projectProvider = Provider.of<ProjectProvider>(context, listen: false);
     final userId = authProvider.currentUser?.id;
+
     if (userId != null) {
       await projectProvider.loadProjects(userId);
     }
   }
 
-  // Changer d'onglet
-  void _onTabChanged(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    //On Ferme le Drawer s'il est ouvert
-    Navigator.of(context).maybePop();
-  }
-
-  // Deconnexion
-  Future<void> _logout() async {
+  Future<void> _handleLogout() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await authProvider.logout();
+
     if (mounted) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const LoginScreen()),
-            (_) => false,
+            (route) => false,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authProvider    = context.watch<AuthProvider>();
-    final String userName     = authProvider.currentUser?.name  ?? 'Utilisateur';
-    final String userEmail    = authProvider.currentUser?.email ?? '';
-    final String avatarLetter = userName[0].toUpperCase();
+    final List<Widget> _tabs = [
+      const DashboardTab(),
+      const ProjectsTab(),
+      const TasksTab(),
+      ProfileTab(onLogout: _handleLogout),
+    ];
 
     return Scaffold(
-
-      // AppBar
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(_titles[_currentIndex]),
-        centerTitle: true,
+        title: Text(
+          _titles[_currentIndex],
+          style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: AppColors.primary,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.white),
       ),
 
-      // Drawer
       drawer: Drawer(
         child: Column(
           children: [
-
-            // En-tete : avatar, nom, email
             UserAccountsDrawerHeader(
-              accountName: Text(
-                userName,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              decoration: const BoxDecoration(color: AppColors.primary),
+              accountName: Consumer<AuthProvider>(
+                builder: (_, auth, __) => Text(auth.currentUser?.name ?? 'Utilisateur'),
               ),
-              accountEmail: Text(userEmail),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Text(
-                  avatarLetter,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
+              accountEmail: Consumer<AuthProvider>(
+                builder: (_, auth, __) => Text(auth.currentUser?.email ?? ''),
               ),
-              decoration: const BoxDecoration(color: Colors.blue),
-            ),
-
-            // Items de navigation
-            _buildDrawerItem(icon: Icons.dashboard, label: 'Dashboard', index: 0),
-            _buildDrawerItem(icon: Icons.folder,    label: 'Projets',   index: 1),
-            _buildDrawerItem(icon: Icons.list_alt,  label: 'Taches',    index: 2),
-            _buildDrawerItem(icon: Icons.person,    label: 'Profil',    index: 3),
-
-            const Divider(),
-
-            // Bouton deconnexion
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: CustomButton(
-                text:       'Deconnexion',
-                icon:       Icons.logout,
-                isOutlined: true,
-                color:      Colors.red,
-                onPressed:  _logout,
+              currentAccountPicture: const CircleAvatar(
+                backgroundColor: AppColors.white,
+                child: Icon(Icons.person, size: 40, color: AppColors.primary),
               ),
             ),
-
+            _buildDrawerItem(
+              icon: Icons.dashboard,
+              label: AppStrings.home,
+              index: 0,
+            ),
+            _buildDrawerItem(
+              icon: Icons.folder,
+              label: AppStrings.projects,
+              index: 1,
+            ),
+            _buildDrawerItem(
+              icon: Icons.list_alt,
+              label: AppStrings.tasks,
+              index: 2,
+            ),
+            _buildDrawerItem(
+              icon: Icons.person,
+              label: AppStrings.profile,
+              index: 3,
+            ),
+            const Spacer(),
+            const Divider(color: AppColors.border),
+            ListTile(
+              leading: const Icon(Icons.logout, color: AppColors.error),
+              title: const Text(
+                AppStrings.logout,
+                style: TextStyle(color: AppColors.error),
+              ),
+              onTap: _handleLogout,
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
 
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          const DashboardTab(),
-          const ProjectsTab(),
-          const TasksTab(),
-          ProfileTab(onLogout: _logout),
-        ],
-      ),
+      body: _tabs[_currentIndex],
 
-      //BottomNavigationBar
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: _onTabChanged,
+        onTap: (index) => setState(() => _currentIndex = index),
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textDisable,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.folder),    label: 'Projets'),
-          BottomNavigationBarItem(icon: Icon(Icons.list_alt),  label: 'Taches'),
-          BottomNavigationBarItem(icon: Icon(Icons.person),    label: 'Profil'),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: AppStrings.home),
+          BottomNavigationBarItem(icon: Icon(Icons.folder), label: AppStrings.projects),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: AppStrings.tasks),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: AppStrings.profile),
         ],
       ),
-
 
       floatingActionButton: Visibility(
         visible: _currentIndex == 0 || _currentIndex == 1,
         child: FloatingActionButton(
           onPressed: () {
-            // TODO: naviguer vers ProjectFormScreen
+            // Navigation vers ProjectFormScreen
           },
-          backgroundColor: Colors.blue,
+          backgroundColor: AppColors.primary,
           tooltip: 'Nouveau projet',
-          child: const Icon(Icons.add, color: Colors.white),
+          child: const Icon(Icons.add, color: AppColors.white),
         ),
       ),
-
     );
   }
 
-
   Widget _buildDrawerItem({
     required IconData icon,
-    required String   label,
-    required int      index,
+    required String label,
+    required int index,
   }) {
     final bool isSelected = _currentIndex == index;
 
     return ListTile(
       leading: Icon(
         icon,
-        color: isSelected ? Colors.blue : Colors.grey,
+        color: isSelected ? AppColors.primary : AppColors.textDisable,
       ),
       title: Text(
         label,
         style: TextStyle(
-          color:      isSelected ? Colors.blue : Colors.black,
+          color: isSelected ? AppColors.primary : AppColors.textPrimary,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
       selected: isSelected,
-      selectedTileColor: Colors.blue.withOpacity(0.1),
-      onTap: () => _onTabChanged(index),
+      onTap: () {
+        setState(() => _currentIndex = index);
+        Navigator.pop(context);
+      },
     );
   }
-
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../core/constants/app_colors.dart';
+
+
 class CustomTextField extends StatefulWidget {
   final String label;
   final TextEditingController? controller;
@@ -21,19 +24,18 @@ class CustomTextField extends StatefulWidget {
     this.prefixIcon,
     this.maxLines = 1,
   });
+
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
-
   bool _motDePasseVisible = false;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
-
       obscureText: widget.obscureText && !_motDePasseVisible,
       keyboardType: widget.keyboardType,
       maxLines: widget.obscureText ? 1 : widget.maxLines,
@@ -41,30 +43,31 @@ class _CustomTextFieldState extends State<CustomTextField> {
       decoration: InputDecoration(
         labelText: widget.label,
         hintText: widget.hint,
-
-        prefixIcon: Visibility(
-          visible: widget.prefixIcon != null,
-          child: Icon(widget.prefixIcon),
-        ),
-       
-        suffixIcon: Visibility(
-          visible: widget.obscureText,
-          child: IconButton(
-            icon: Visibility(
-              visible: _motDePasseVisible,
-              replacement: const Icon(Icons.visibility_off),
-              child: const Icon(Icons.visibility),
-            ),
-            onPressed: () {
-              setState(() {
-                _motDePasseVisible = !_motDePasseVisible;
-              });
-            },
-          ),
-        ),
+        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        floatingLabelStyle: const TextStyle(color: AppColors.primary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        prefixIcon: widget.prefixIcon != null
+            ? Icon(widget.prefixIcon, color: AppColors.textSecondary)
+            : null,
+        suffixIcon: widget.obscureText
+            ? IconButton(
+          icon: Icon(
+            _motDePasseVisible ? Icons.visibility : Icons.visibility_off,
+            color: AppColors.textSecondary,
+          ),
+          onPressed: () => setState(() => _motDePasseVisible = !_motDePasseVisible),
+        )
+            : null,
       ),
     );
   }

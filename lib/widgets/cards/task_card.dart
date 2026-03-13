@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_strings.dart';
+
+
 class TaskCard extends StatelessWidget {
   final String titre;
   final String description;
-  final String statut; // 'todo', 'inProgress', 'done'
-  final String priorite; // 'low', 'medium', 'high'
+  final String statut;
+  final String priorite;
   final DateTime? dateEcheance;
   final VoidCallback? onTap;
 
@@ -18,131 +22,105 @@ class TaskCard extends StatelessWidget {
     this.onTap,
   });
 
-  //On  Retourne la couleur selon le statut
   Color _couleurStatut() {
-    if (statut == 'inProgress') return Colors.orange;
-    if (statut == 'done') return Colors.green;
-    return Colors.blue; // todo
+    if (statut == 'inProgress') return AppColors.statusInProgress;
+    if (statut == 'done') return AppColors.statusDone;
+    return AppColors.primary;
   }
 
-  //On Retourne le texte lisible du statut
   String _texteStatut() {
-    if (statut == 'inProgress') return 'En cours';
-    if (statut == 'done') return 'Terminée';
-    return 'À faire';
+    if (statut == 'inProgress') return AppStrings.statusInProgress;
+    if (statut == 'done') return AppStrings.statusDone;
+    return AppStrings.statusTodo;
   }
 
-  //On Retourne la couleur selon la priorité
   Color _couleurPriorite() {
-    if (priorite == 'high') return Colors.red;
-    if (priorite == 'medium') return Colors.orange;
-    return Colors.grey; // low
-  }
-
-  //On Retourne l'icône selon la priorité
-  IconData _iconePriorite() {
-    if (priorite == 'high') return Icons.arrow_upward;
-    if (priorite == 'medium') return Icons.remove;
-    return Icons.arrow_downward;
+    if (priorite == 'high') return AppColors.priorityHigh;
+    if (priorite == 'medium') return AppColors.priorityMedium;
+    return AppColors.priorityLow;
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 2,
-        margin: const EdgeInsets.symmetric(vertical: 6),
+    return Card(
+      elevation: 1,
+      color: AppColors.surface,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: AppColors.border.withOpacity(0.5)),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Ligne du haut : titre + badge statut
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     child: Text(
                       titre,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: 16,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ),
-                  // Badge de statut
                   Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: _couleurStatut().withOpacity(0.15),
+                      color: _couleurStatut().withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: _couleurStatut()),
                     ),
                     child: Text(
                       _texteStatut(),
                       style: TextStyle(
                         color: _couleurStatut(),
                         fontSize: 11,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
-
-              // Description (visible seulement si non vide)
-              Visibility(
-                visible: description.isNotEmpty,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
-                  child: Text(
-                    description,
-                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+              if (description.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-
-              // Ligne du bas : priorité + date d'échéance
+              ],
+              const SizedBox(height: 12),
               Row(
                 children: [
-                  // Indicateur de priorité
-                  Icon(
-                    _iconePriorite(),
-                    size: 16,
-                    color: _couleurPriorite(),
-                  ),
+                  Icon(Icons.flag, size: 16, color: _couleurPriorite()),
                   const SizedBox(width: 4),
                   Text(
                     priorite == 'high'
-                        ? 'Haute'
+                        ? AppStrings.priorityHigh
                         : priorite == 'medium'
-                        ? 'Moyenne'
-                        : 'Basse',
-                    style: TextStyle(
-                      color: _couleurPriorite(),
-                      fontSize: 12,
-                    ),
+                        ? AppStrings.priorityMedium
+                        : AppStrings.priorityLow,
+                    style: TextStyle(color: _couleurPriorite(), fontSize: 12),
                   ),
                   const Spacer(),
-                  // Date d'échéance (visible seulement si définie)
                   Visibility(
                     visible: dateEcheance != null,
                     child: Row(
                       children: [
-                        const Icon(Icons.calendar_today,
-                            size: 13, color: Colors.grey),
+                        const Icon(Icons.calendar_today, size: 13, color: AppColors.textDisable),
                         const SizedBox(width: 3),
                         Text(
                           dateEcheance != null
                               ? '${dateEcheance!.day}/${dateEcheance!.month}/${dateEcheance!.year}'
                               : '',
-                          style:
-                          const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(fontSize: 12, color: AppColors.textDisable),
                         ),
                       ],
                     ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_strings.dart';
 import '../../../models/Task.dart';
 import '../../../providers/task_provider.dart';
 import '../../../widgets/cards/task_card.dart';
@@ -23,7 +26,6 @@ class _TasksTabState extends State<TasksTab> {
     return ListenableBuilder(
       listenable: taskProvider,
       builder: (context, _) {
-
         if (taskProvider.isLoading) {
           return const LoadingIndicator();
         }
@@ -31,7 +33,6 @@ class _TasksTabState extends State<TasksTab> {
 
         return Column(
           children: [
-            //Filtres par STATUT
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -47,9 +48,9 @@ class _TasksTabState extends State<TasksTab> {
                   ),
                   const SizedBox(width: 8),
                   FilterChip(
-                    label: const Text('A faire'),
+                    label: const Text(AppStrings.statusTodo),
                     selected: _statusFilter == TaskStatus.todo,
-                    selectedColor: Colors.orange.withOpacity(0.3),
+                    selectedColor: AppColors.warning.withOpacity(0.3),
                     onSelected: (_) {
                       setState(() => _statusFilter = TaskStatus.todo);
                       taskProvider.setStatusFilter(TaskStatus.todo);
@@ -57,9 +58,9 @@ class _TasksTabState extends State<TasksTab> {
                   ),
                   const SizedBox(width: 8),
                   FilterChip(
-                    label: const Text('En cours'),
+                    label: const Text(AppStrings.statusInProgress),
                     selected: _statusFilter == TaskStatus.inProgress,
-                    selectedColor: Colors.purple.withOpacity(0.3),
+                    selectedColor: AppColors.info.withOpacity(0.3),
                     onSelected: (_) {
                       setState(() => _statusFilter = TaskStatus.inProgress);
                       taskProvider.setStatusFilter(TaskStatus.inProgress);
@@ -67,20 +68,18 @@ class _TasksTabState extends State<TasksTab> {
                   ),
                   const SizedBox(width: 8),
                   FilterChip(
-                    label: const Text('Terminees'),
+                    label: const Text(AppStrings.statusDone),
                     selected: _statusFilter == TaskStatus.done,
-                    selectedColor: Colors.green.withOpacity(0.3),
+                    selectedColor: AppColors.success.withOpacity(0.3),
                     onSelected: (_) {
                       setState(() => _statusFilter = TaskStatus.done);
                       taskProvider.setStatusFilter(TaskStatus.done);
                     },
                   ),
-
                 ],
               ),
             ),
 
-            //Filtres par PRIORITE
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -96,9 +95,9 @@ class _TasksTabState extends State<TasksTab> {
                   ),
                   const SizedBox(width: 8),
                   FilterChip(
-                    label: const Text('Haute'),
+                    label: const Text(AppStrings.priorityHigh),
                     selected: _priorityFilter == TaskPriority.high,
-                    selectedColor: Colors.red.withOpacity(0.3),
+                    selectedColor: AppColors.priorityHigh.withOpacity(0.3),
                     onSelected: (_) {
                       setState(() => _priorityFilter = TaskPriority.high);
                       taskProvider.setPriorityFilter(TaskPriority.high);
@@ -106,27 +105,24 @@ class _TasksTabState extends State<TasksTab> {
                   ),
                   const SizedBox(width: 8),
                   FilterChip(
-                    label: const Text('Moyenne'),
+                    label: const Text(AppStrings.priorityMedium),
                     selected: _priorityFilter == TaskPriority.medium,
-                    selectedColor: Colors.orange.withOpacity(0.3),
+                    selectedColor: AppColors.priorityMedium.withOpacity(0.3),
                     onSelected: (_) {
                       setState(() => _priorityFilter = TaskPriority.medium);
                       taskProvider.setPriorityFilter(TaskPriority.medium);
                     },
                   ),
                   const SizedBox(width: 8),
-
-
                   FilterChip(
-                    label: const Text('Basse'),
+                    label: const Text(AppStrings.priorityLow),
                     selected: _priorityFilter == TaskPriority.low,
-                    selectedColor: Colors.grey.withOpacity(0.3),
+                    selectedColor: AppColors.priorityLow.withOpacity(0.3),
                     onSelected: (_) {
                       setState(() => _priorityFilter = TaskPriority.low);
                       taskProvider.setPriorityFilter(TaskPriority.low);
                     },
                   ),
-
                 ],
               ),
             ),
@@ -138,18 +134,17 @@ class _TasksTabState extends State<TasksTab> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.checklist, size: 80, color: Colors.grey),
+                    Icon(Icons.checklist, size: 80, color: AppColors.textDisable),
                     SizedBox(height: 16),
                     Text(
-                      'Aucune tache pour le moment',
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                      AppStrings.noTasks, // AppStrings
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
                     ),
                   ],
                 ),
               ),
             ),
 
-            // Liste des taches
             Visibility(
               visible: tasks.isNotEmpty,
               child: Expanded(
@@ -161,24 +156,19 @@ class _TasksTabState extends State<TasksTab> {
                     return TaskCard(
                       titre:       t.title,
                       description: t.description ?? '',
-
                       statut: t.status == TaskStatus.inProgress ? 'inProgress'
                           : t.status == TaskStatus.done       ? 'done'
                           : 'todo',
-
                       priorite: t.priority == TaskPriority.high   ? 'high'
                           : t.priority == TaskPriority.medium ? 'medium'
                           : 'low',
                       dateEcheance: t.dueDate,
-                      onTap: () {
-                        // TODO:On naviguer vers TaskDetailScreen
-                      },
+                      onTap: () {},
                     );
                   },
                 ),
               ),
             ),
-
           ],
         );
       },

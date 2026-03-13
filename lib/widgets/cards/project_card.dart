@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../models/project.dart';
+
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_strings.dart';
+
 
 class ProjectCard extends StatelessWidget {
   final String nomProjet;
@@ -20,18 +23,19 @@ class ProjectCard extends StatelessWidget {
     this.onModifier,
     this.onSupprimer,
   });
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Card(
         elevation: 2,
+        color: AppColors.surface,
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              // Pastille de couleur du projet
               Container(
                 width: 16,
                 height: 16,
@@ -41,8 +45,6 @@ class ProjectCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-
-              // Nom + description
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,29 +54,24 @@ class ProjectCard extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    // On affiche la description seulement si elle n'est pas vide
-                    Visibility(
-                      visible: description.isNotEmpty,
-                      child: Text(
+                    if (description.isNotEmpty)
+                      Text(
                         description,
-                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
                       ),
-                    ),
                     const SizedBox(height: 4),
                     Text(
                       '$nombreTaches tâche(s)',
-                      style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                      style: const TextStyle(color: AppColors.textDisable, fontSize: 12),
                     ),
                   ],
                 ),
               ),
-
-              // Menu contextuel : modifier / supprimer
               PopupMenuButton<String>(
                 onSelected: (valeur) {
                   if (valeur == 'modifier') {
@@ -88,9 +85,9 @@ class ProjectCard extends StatelessWidget {
                     value: 'modifier',
                     child: Row(
                       children: [
-                        Icon(Icons.edit, size: 18),
+                        Icon(Icons.edit, size: 18, color: AppColors.textPrimary),
                         SizedBox(width: 8),
-                        Text('Modifier'),
+                        Text(AppStrings.edit),
                       ],
                     ),
                   ),
@@ -98,9 +95,9 @@ class ProjectCard extends StatelessWidget {
                     value: 'supprimer',
                     child: Row(
                       children: [
-                        Icon(Icons.delete, size: 18, color: Colors.red),
+                        Icon(Icons.delete, size: 18, color: AppColors.error),
                         SizedBox(width: 8),
-                        Text('Supprimer', style: TextStyle(color: Colors.red)),
+                        Text(AppStrings.delete, style: TextStyle(color: AppColors.error)),
                       ],
                     ),
                   ),

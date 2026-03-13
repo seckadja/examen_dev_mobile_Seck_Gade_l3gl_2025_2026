@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/custom_text_field.dart';
@@ -68,6 +70,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final authLoading = context.watch<AuthProvider>().isLoading;
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -82,13 +85,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                    color: AppColors.primary,
                   ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Créez votre compte',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 40),
 
@@ -173,7 +176,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Déjà un compte ? Se connecter'),
+                  child: const Text(
+                    'Déjà un compte ? Se connecter',
+                    style: TextStyle(color: AppColors.primary),
+                  ),
                 ),
               ],
             ),

@@ -14,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Clé pour gérer la validation du formulaire
+
   final _formKey = GlobalKey<FormState>();
 
   // Contrôleurs pour récupérer le texte saisi
