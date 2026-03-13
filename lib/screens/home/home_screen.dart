@@ -21,7 +21,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-
   final List<String> _titles = [
     AppStrings.home,
     AppStrings.projects,
@@ -61,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _tabs = [
+    final List<Widget> tabs = [
       const DashboardTab(),
       const ProjectsTab(),
       const TasksTab(),
@@ -96,26 +95,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Icon(Icons.person, size: 40, color: AppColors.primary),
               ),
             ),
-            _buildDrawerItem(
-              icon: Icons.dashboard,
-              label: AppStrings.home,
-              index: 0,
-            ),
-            _buildDrawerItem(
-              icon: Icons.folder,
-              label: AppStrings.projects,
-              index: 1,
-            ),
-            _buildDrawerItem(
-              icon: Icons.list_alt,
-              label: AppStrings.tasks,
-              index: 2,
-            ),
-            _buildDrawerItem(
-              icon: Icons.person,
-              label: AppStrings.profile,
-              index: 3,
-            ),
+            _buildDrawerItem(icon: Icons.dashboard, label: AppStrings.home, index: 0),
+            _buildDrawerItem(icon: Icons.folder, label: AppStrings.projects, index: 1),
+            _buildDrawerItem(icon: Icons.list_alt, label: AppStrings.tasks, index: 2),
+            _buildDrawerItem(icon: Icons.person, label: AppStrings.profile, index: 3),
             const Spacer(),
             const Divider(color: AppColors.border),
             ListTile(
@@ -131,7 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      body: _tabs[_currentIndex],
+
+      body: tabs[_currentIndex],
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -145,18 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: AppStrings.tasks),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: AppStrings.profile),
         ],
-      ),
-
-      floatingActionButton: Visibility(
-        visible: _currentIndex == 0 || _currentIndex == 1,
-        child: FloatingActionButton(
-          onPressed: () {
-            // Navigation vers ProjectFormScreen
-          },
-          backgroundColor: AppColors.primary,
-          tooltip: 'Nouveau projet',
-          child: const Icon(Icons.add, color: AppColors.white),
-        ),
       ),
     );
   }
